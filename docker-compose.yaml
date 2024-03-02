@@ -1,0 +1,51 @@
+version: '3'
+
+services: 
+  app:
+    restart: on-failure
+    build: ./node
+    ports:
+      - '3000:3000'
+    networks: 
+      - app-network
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: data_base
+    depends_on:
+      - db
+    command: ["./wait-for-it.sh", "db:3306", "--", "npm", "start"]
+
+  nginx:
+    build: ./nginx
+    ports:
+      - '8080:80'
+    depends_on:
+      - app
+    networks: 
+      - app-network
+
+  db:
+    image: mysql:latest
+    restart: always
+    tty: true
+    volumes: 
+      - ./mysql:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment: 
+      - MYSQL_DATABASE=data_base
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=false
+    networks: 
+      - app-network
+    command: ["--innodb-use-native-aio=0","--default-authentication-plugin=caching_sha2_password"]
+
+    
+
+networks: 
+  app-network:
+    driver: bridge         
