@@ -5,7 +5,7 @@ Este repositório contém uma solução para o desafio prático que aborda a uti
 Para rodar a aplicação, basta executar o seguinte comando:
 
 ```bash
-docker-compose up -d
+docker-compose up --build
 ```
 
 Isso iniciará os containers necessários, e a aplicação estará disponível na porta 8080.
