@@ -15,7 +15,7 @@ const connection = mysql.createConnection({
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  queryDatabase("SELECT name FROM people", (error, nomes) => {
+  queryDatabaseSelect("SELECT name FROM people", (error, nomes) => {
     if (error) {
       console.error(error);
       res.status(500).send("Erro ao buscar dados no banco de dados");
@@ -39,7 +39,7 @@ app.post("/", (req, res) => {
       .json({ error: 'Campo "name" não fornecido no corpo da requisição.' });
   }
 
-  queryDatabase(
+  queryDatabaseInsert(
     `INSERT INTO people(name) values('${name}')`,
     (error) => {
       if (error) {
@@ -51,7 +51,7 @@ app.post("/", (req, res) => {
   res.status(201).json({ message: `O nome ${name} foi recebido com sucesso.` });
 });
 
-function queryDatabase(sql, callback) {
+function queryDatabaseSelect(sql, callback) {
   connection.query(sql, (error, results, fields) => {
     if (error) {
       callback(error, null);
@@ -59,6 +59,14 @@ function queryDatabase(sql, callback) {
       const nomes = results.map((row) => row.name);
       callback(null, nomes);
     }
+  });
+}
+
+function queryDatabaseInsert(sql, callback) {
+  connection.query(sql, (error, results, fields) => {
+    if (error) {
+      callback(error, null);
+    } 
   });
 }
 

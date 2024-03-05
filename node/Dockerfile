@@ -14,4 +14,6 @@ RUN cp /usr/local/bin/wait-for-it.sh /usr/src/app
 
 COPY ./index.js ./
 
+VOLUME /node
+
 CMD ["npm","start"]
