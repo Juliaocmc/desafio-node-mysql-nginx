@@ -16,9 +16,9 @@ services:
       DB_NAME: data_base
     depends_on:
       - db
-    command: ["./wait-for-it.sh", "db:3306", "--", "npm", "start"]
+    command: wait-for db:3306 -t 40 -- sh -c "npm install -y && npm start"
     volumes: 
-      - ./node:/usr/src/fake
+      - ./node:/usr/src/app
 
   nginx:
     build: ./nginx
